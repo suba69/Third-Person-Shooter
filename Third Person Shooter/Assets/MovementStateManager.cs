@@ -38,7 +38,7 @@ public class MovementStateManager : MonoBehaviour
 
     private bool Ground()
     {
-        spherePos = new Vector3(transform.position.x, transform.position.y * groundYOffset, transform.position.z);
+        spherePos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         if (Physics.CheckSphere(spherePos, controller.radius, groundMask))
         {
             return true;
