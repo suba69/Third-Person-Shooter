@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class MovementStateManager : MonoBehaviour
 {
+    MovementBaseState currentState;
+
+    public IdleState idle = new IdleState();
+    public WalkState walk = new WalkState();
+    public CrouchState crouch = new CrouchState();
+    public RunState run = new RunState();
+
     public float moveSpeed = 3;
     [HideInInspector] public Vector3 dir;
     private float hzInput, vInput;
@@ -13,19 +20,27 @@ public class MovementStateManager : MonoBehaviour
     [SerializeField] private LayerMask groundMask;
     Vector3 spherePos;
 
-    [SerializeField] float gravity =- 9.81f;
+    [SerializeField] float gravity = -9.81f;
     Vector3 velocity;
     private void Start()
     {
         controller = GetComponent<CharacterController>();
+        SwitchState(idle);
     }
 
     private void Update()
     {
         GetDirectionAndMove();
         Gravity();
+
+        currentState.UpdateState(this);
     }
 
+    public void SwitchState(MovementBaseState state)
+    {
+        currentState = state;
+        currentState.EnterState(this);
+    }
     private void GetDirectionAndMove()
     {
         hzInput = Input.GetAxis("Horizontal");
@@ -58,11 +73,5 @@ public class MovementStateManager : MonoBehaviour
         }
 
         controller.Move(velocity * Time.deltaTime);
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(spherePos, controller.radius);
     }
 }
